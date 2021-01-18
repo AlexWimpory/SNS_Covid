@@ -34,7 +34,7 @@ def load_country(file_name, iso_code):
 
 
 if __name__ == '__main__':
-    # download_data('https://covid.ourworldindata.org/data/owid-covid-data.csv')
+    # download_data('https://covid.ourworldindata.org/data/owid-covid-data.json')
     df = load_country('owid-covid-data.json', 'GBR')
     df.plot(x='date', y='new_deaths', kind='line')
     plt.show()
