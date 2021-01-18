@@ -1,1 +1,1 @@
-# SNS---Covid
+# SNS_Covid
