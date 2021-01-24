@@ -1,4 +1,6 @@
-tensorflow==2.4.0
-pandas==1.2.0
-matplotlib==3.3.3
+tensorflow~=2.4.0
+pandas~=1.2.0
+matplotlib~=3.3.3
+numpy~=1.19.5
+
 
