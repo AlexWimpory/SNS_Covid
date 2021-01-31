@@ -40,3 +40,9 @@ def normalise_data(train, val, test):
     val = (val - train_mean) / train_std
     test = (test - train_mean) / train_std
     return train, val, test
+
+
+def generate_train_val_test(df):
+    processed_df = filter_data(process_date(df))
+    train_df, val_df, test_df = split_data(processed_df, 62, 340)
+    return normalise_data(train_df, val_df, test_df)

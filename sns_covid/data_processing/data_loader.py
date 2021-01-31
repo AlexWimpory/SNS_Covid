@@ -30,7 +30,8 @@ def load_data(download=False):
     return file_name
 
 
-def load_country(file_name, iso_code):
+def load_country(iso_code, download=False):
+    file_name = load_data(download)
     with open(f'{file_name}') as json_file:
         data = json.load(json_file)
         country_data = data[iso_code]['data']

@@ -1,7 +1,9 @@
 from tensorflow.python.keras import Sequential
-from sns_covid.model.model_structures import *
-import numpy as np
-import pandas as pd
+import tensorflow as tf
+from tensorflow.python.keras.callbacks import ModelCheckpoint
+
+from sns_covid import config
+
 
 
 class CovidPredictionModel:
@@ -12,19 +14,28 @@ class CovidPredictionModel:
             self.model.add(layer)
 
     def compile(self):
-        """Compile the model and print the structure"""
-        self.model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer='adam')
-        self.model.summary()
+        self.model.compile(loss=tf.losses.MeanSquaredError(),
+                           optimizer=tf.optimizers.Adam(),
+                           metrics=[tf.metrics.MeanAbsoluteError()])
+        # self.model.summary()
 
-    def test_model(self, x_data, y_data):
+    def test(self, dataframe):
         """Calculate the model's accuracy on the input dataset"""
-        score = self.model.evaluate(x_data, y_data, verbose=0)
-        accuracy = 100 * score[1]
-        return accuracy
+        score = self.model.evaluate(dataframe, verbose=0)
+        return score
 
-    def train_model(self, x_train, y_train, x_val, y_val):
-        """Train and save the model"""
-        pass
+    def fit(self, train_ds, val_ds, patience=2):
+        checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
+                                       verbose=1,
+                                       save_best_only=True)
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
+                                                          patience=patience,
+                                                          mode='min')
+        history = self.model.fit(train_ds,
+                                 epochs=config.epochs,
+                                 validation_data=val_ds,
+                                 callbacks=[early_stopping, checkpointer])
+        return history
 
 
 def train_and_test_model(features, model):
