@@ -17,19 +17,22 @@ class CovidPredictionModel:
         self.model.compile(loss=tf.losses.MeanSquaredError(),
                            optimizer=tf.optimizers.Adam(),
                            metrics=[tf.metrics.MeanAbsoluteError()])
-        # self.model.summary()
+        try:
+            self.model.summary()
+        except ValueError:
+            print('Unable to produce summary')
 
     def test(self, dataframe):
         """Calculate the model's accuracy on the input dataset"""
         score = self.model.evaluate(dataframe, verbose=0)
         return score
 
-    def fit(self, train_ds, val_ds, patience=2):
+    def fit(self, train_ds, val_ds):
         checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
                                        verbose=1,
                                        save_best_only=True)
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
-                                                          patience=patience,
+                                                          patience=config.patience,
                                                           mode='min')
         history = self.model.fit(train_ds,
                                  epochs=config.epochs,

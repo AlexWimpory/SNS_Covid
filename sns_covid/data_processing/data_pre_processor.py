@@ -16,19 +16,20 @@ def insert_missing_dates():
     pass
 
 
-def remove_nan():
-    pass
+def remove_nan(df):
+    # TODO Maybe more complex method
+    return df.bfill(axis='rows').ffill(axis='rows')
 
 
 def save_data():
     pass
 
 
-def split_data(df, start_at, end_at):
-    n = end_at - start_at
-    train_df = df[start_at:int(n * 0.7)]
+def split_data(df):
+    n = len(df)
+    train_df = df[0:int(n * 0.7)]
     val_df = df[int(n * 0.7):int(n * 0.9)]
-    test_df = df[int(n * 0.9):end_at]
+    test_df = df[int(n * 0.9):]
     return train_df, val_df, test_df
 
 
@@ -44,5 +45,6 @@ def normalise_data(train, val, test):
 
 def generate_train_val_test(df):
     processed_df = filter_data(process_date(df))
-    train_df, val_df, test_df = split_data(processed_df, 62, 340)
+    processed_df = remove_nan(processed_df)
+    train_df, val_df, test_df = split_data(processed_df)
     return normalise_data(train_df, val_df, test_df)
