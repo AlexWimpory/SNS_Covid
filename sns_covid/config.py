@@ -1,4 +1,4 @@
-output_directory = '../data'
+output_directory = 'c:/Users/Alex/PycharmProjects/SNS_covid/data'
 data_source_url = 'https://covid.ourworldindata.org/data/owid-covid-data.json'
 date_column_name = 'date'
 date_column_format = '%Y-%m-%d'

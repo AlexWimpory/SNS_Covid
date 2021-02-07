@@ -28,16 +28,16 @@ class CovidPredictionModel:
         return score
 
     def fit(self, train_ds, val_ds):
-        checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
-                                       verbose=1,
-                                       save_best_only=True)
+        # checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
+        #                                verbose=1,
+        #                                save_best_only=True)
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                           patience=config.patience,
                                                           mode='min')
         history = self.model.fit(train_ds,
                                  epochs=config.epochs,
                                  validation_data=val_ds,
-                                 callbacks=[early_stopping, checkpointer])
+                                 callbacks=[early_stopping])
         return history
 
 

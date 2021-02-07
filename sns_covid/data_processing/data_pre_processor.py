@@ -1,6 +1,6 @@
 from sns_covid import config
 import pandas as pd
-
+import numpy as np
 
 def process_date(df):
     anchor_date = pd.to_datetime(df[config.date_column_name].iloc[0])
@@ -17,8 +17,13 @@ def insert_missing_dates():
 
 
 def remove_nan(df):
-    # TODO Maybe more complex method
-    return df.bfill(axis='rows').ffill(axis='rows')
+    df = df.bfill(axis='rows', limit=7).ffill(axis='rows', limit=7)
+    return df.dropna(axis=0)
+
+
+def smooth_data(df, column_name):
+    df[f'{column_name}_smoothed_manual'] = df[column_name].replace(np.nan, 0).rolling(7).mean()
+    return df
 
 
 def save_data():
@@ -44,7 +49,7 @@ def normalise_data(train, val, test):
 
 
 def generate_train_val_test(df):
-    processed_df = filter_data(process_date(df))
+    processed_df = filter_data(df)
     processed_df = remove_nan(processed_df)
     train_df, val_df, test_df = split_data(processed_df)
     return normalise_data(train_df, val_df, test_df)

@@ -1,11 +1,8 @@
 import json
 import os
 from urllib.error import URLError
-
 import requests
 import pandas as pd
-import matplotlib.pyplot as plt
-
 from sns_covid import config
 
 
@@ -20,11 +17,11 @@ def check_downloadable(url):
 
 
 def load_data(download=False):
-    check_downloadable(config.data_source_url)
-    file = requests.get(config.data_source_url, allow_redirects=True)
     basename = os.path.splitext(os.path.basename(config.data_source_url))[0]
     file_name = f'{config.output_directory}/{basename}.json'
     if download:
+        check_downloadable(config.data_source_url)
+        file = requests.get(config.data_source_url, allow_redirects=True)
         with open(file_name, 'wb') as fin:
             fin.write(file.content)
     return file_name
@@ -36,4 +33,6 @@ def load_country(iso_code, download=False):
         data = json.load(json_file)
         country_data = data[iso_code]['data']
         dataframe = pd.DataFrame(country_data)
+        dataframe['date'] = pd.to_datetime(dataframe['date'])
+        dataframe.set_index('date', inplace=True)
         return dataframe
