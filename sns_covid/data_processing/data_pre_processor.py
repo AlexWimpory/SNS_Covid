@@ -53,3 +53,11 @@ def generate_train_val_test(df):
     processed_df = remove_nan(processed_df)
     train_df, val_df, test_df = split_data(processed_df)
     return normalise_data(train_df, val_df, test_df)
+
+
+def generate_train_val_test_2(df):
+    processed_df = filter_data(df)
+    processed_df = remove_nan(processed_df)
+    train_df, val_df, test_df = split_data(processed_df)
+    train_df, val_df, test_df = normalise_data(train_df, val_df, test_df)
+    return pd.concat([train_df, val_df, test_df])
