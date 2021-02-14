@@ -1,7 +1,7 @@
 from sns_covid import config
 import pandas as pd
 import numpy as np
-from numpy import split, vsplit, array_split
+from numpy import array_split
 from numpy import array
 
 
@@ -12,7 +12,9 @@ def process_date(df):
 
 
 def filter_data(df):
-    return df[df.columns[df.columns.isin(config.columns_used)]]
+    df = df[df.columns[df.columns.isin(config.columns_used)]]
+    df = df.reindex(columns=config.columns_used)
+    return df
 
 
 def insert_missing_dates():
@@ -34,7 +36,6 @@ def save_data():
 
 
 def split_data_train_test(data):
-    # data = data.to_numpy()
     n = len(data)
     train = data[0: int(n * 0.8)]
     test = data[int(n * 0.8): n]

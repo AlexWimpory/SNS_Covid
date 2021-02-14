@@ -5,10 +5,14 @@ from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import smooth_data
 import seaborn as sns
 
-def visualise_results(test_predictions, test_df):
-    x = list(range(0, len(test_predictions)))
-    plt.plot(x, test_df[config.label_columns])
-    plt.scatter(x, test_predictions)
+
+def visualise(model_name, score, scores):
+    # summarize scores
+    s_scores = ', '.join(['%.1f' % s for s in scores])
+    print('%s: [%.3f] %s' % (model_name, score, s_scores))
+    # plot scores
+    days = ['1', '2', '3', '4', '5', '6', '7']
+    plt.plot(days, scores, marker='o', label='cnn')
     plt.show()
 
 
