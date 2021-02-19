@@ -10,8 +10,47 @@ from math import sqrt
 from sns_covid.visulisation.plotter import plot_loss
 import abc
 
-class CovidPredictionModel:
 
+class CovidPredictionModel:
+    @staticmethod
+    def evaluate_forecasts(actual, predicted):
+        scores = list()
+        # calculate an RMSE score for each day
+        for i in range(actual.shape[1]):
+            # calculate mse
+            mse = mean_squared_error(actual[:, i], predicted[:, i])
+            # calculate rmse
+            rmse = sqrt(mse)
+            # store
+            scores.append(rmse)
+            # calculate overall RMSE
+        s = 0
+        for row in range(actual.shape[0]):
+            for col in range(actual.shape[1]):
+                s += (actual[row, col] - predicted[row, col]) ** 2
+        score = sqrt(s / (actual.shape[0] * actual.shape[1]))
+        return score, scores
+
+    @abc.abstractmethod
+    def forecast(self, history):
+        raise NotImplementedError
+
+    def evaluate_model(self, train, test):
+        # history is a list of weekly data
+        history = [x for x in train]
+        # walk-forward validation over each week
+        predictions = list()
+        for i in range(len(test)):
+            # predict the week
+            yhat_sequence = self.forecast(history)
+            # store the predictions
+            predictions.append(yhat_sequence)
+            # get real observation and add to history for predicting the next week
+            history.append(test[i, :])
+        predictions = array(predictions)
+        # evaluate predictions days for each week
+        score, scores = self.evaluate_forecasts(test[:, :, 0], predictions)
+        return score, scores
 
 
 class CovidPredictionSequentialModel(CovidPredictionModel):
@@ -42,49 +81,9 @@ class CovidPredictionSequentialModel(CovidPredictionModel):
                                  callbacks=[checkpointer])
         plot_loss(history)
 
-    @staticmethod
-    def evaluate_forecasts(actual, predicted):
-        scores = list()
-        # calculate an RMSE score for each day
-        for i in range(actual.shape[1]):
-            # calculate mse
-            mse = mean_squared_error(actual[:, i], predicted[:, i])
-            # calculate rmse
-            rmse = sqrt(mse)
-            # store
-            scores.append(rmse)
-            # calculate overall RMSE
-        s = 0
-        for row in range(actual.shape[0]):
-            for col in range(actual.shape[1]):
-                s += (actual[row, col] - predicted[row, col]) ** 2
-        score = sqrt(s / (actual.shape[0] * actual.shape[1]))
-        return score, scores
-
-    @abc.abstractmethod
-    def forecast(self, history):
-        raise NotImplementedError
-
     @abc.abstractmethod
     def to_supervised(self, train):
         raise NotImplementedError
-
-    def evaluate_model(self, train, test):
-        # history is a list of weekly data
-        history = [x for x in train]
-        # walk-forward validation over each week
-        predictions = list()
-        for i in range(len(test)):
-            # predict the week
-            yhat_sequence = self.forecast(history)
-            # store the predictions
-            predictions.append(yhat_sequence)
-            # get real observation and add to history for predicting the next week
-            history.append(test[i, :])
-        predictions = array(predictions)
-        # evaluate predictions days for each week
-        score, scores = self.evaluate_forecasts(test[:, :, 0], predictions)
-        return score, scores
 
 
 class CovidPredictionModelCNNMulti(CovidPredictionSequentialModel):
@@ -157,15 +156,12 @@ class CovidPredictionModelCNNUni(CovidPredictionSequentialModel):
         return array(X), array(y)
 
 
-class CovidPredictionModelNaiveDaily(CovidPredictionSequentialModel):
+class CovidPredictionModelNaiveDaily(CovidPredictionModel):
     def __init__(self, model_name, train):
         self.name = model_name
         self.train = train
 
     def fit(self):
-        pass
-
-    def to_supervised(self, train):
         pass
 
     def compile(self):
@@ -181,15 +177,12 @@ class CovidPredictionModelNaiveDaily(CovidPredictionSequentialModel):
         return yhat
 
 
-class CovidPredictionModelNaiveWeekly(CovidPredictionSequentialModel):
+class CovidPredictionModelNaiveWeekly(CovidPredictionModel):
     def __init__(self, model_name, train):
         self.name = model_name
         self.train = train
 
     def fit(self):
-        pass
-
-    def to_supervised(self, train):
         pass
 
     def compile(self):
