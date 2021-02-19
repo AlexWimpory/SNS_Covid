@@ -10,8 +10,11 @@ from math import sqrt
 from sns_covid.visulisation.plotter import plot_loss
 import abc
 
-
 class CovidPredictionModel:
+
+
+
+class CovidPredictionSequentialModel(CovidPredictionModel):
     def __init__(self, model_name, f_layers, train):
         self.model = Sequential(name=model_name)
         self.name = model_name
@@ -38,7 +41,6 @@ class CovidPredictionModel:
                                  batch_size=config.batch_size,
                                  callbacks=[checkpointer])
         plot_loss(history)
-        return history
 
     @staticmethod
     def evaluate_forecasts(actual, predicted):
@@ -85,7 +87,7 @@ class CovidPredictionModel:
         return score, scores
 
 
-class CovidPredictionModelCNNMulti(CovidPredictionModel):
+class CovidPredictionModelCNNMulti(CovidPredictionSequentialModel):
     def forecast(self, history):
         # flatten data
         data = array(history)
@@ -119,7 +121,7 @@ class CovidPredictionModelCNNMulti(CovidPredictionModel):
         return array(X), array(y)
 
 
-class CovidPredictionModelCNNUni(CovidPredictionModel):
+class CovidPredictionModelCNNUni(CovidPredictionSequentialModel):
     def forecast(self, history):
         # flatten data
         data = array(history)
@@ -153,3 +155,48 @@ class CovidPredictionModelCNNUni(CovidPredictionModel):
             # move along one time step
             in_start += 1
         return array(X), array(y)
+
+
+class CovidPredictionModelNaiveDaily(CovidPredictionSequentialModel):
+    def __init__(self, model_name, train):
+        self.name = model_name
+        self.train = train
+
+    def fit(self):
+        pass
+
+    def to_supervised(self, train):
+        pass
+
+    def compile(self):
+        pass
+
+    def forecast(self, history):
+        # get the data for the prior week
+        last_week = history[-1]
+        # get the total active power for the last day
+        value = last_week[-1, 0]
+        # prepare 7 day forecast
+        yhat = [value for _ in range(7)]
+        return yhat
+
+
+class CovidPredictionModelNaiveWeekly(CovidPredictionSequentialModel):
+    def __init__(self, model_name, train):
+        self.name = model_name
+        self.train = train
+
+    def fit(self):
+        pass
+
+    def to_supervised(self, train):
+        pass
+
+    def compile(self):
+        pass
+
+    def forecast(self, history):
+        # get the data for the prior week
+        last_week = history[-1]
+        yhat = last_week[:, 0]
+        return yhat

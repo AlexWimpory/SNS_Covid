@@ -2,13 +2,15 @@ from sns_covid import config
 from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import generate_train_test
 from sns_covid.model.model_structures import *
-from sns_covid.model.model_trainer import CovidPredictionModelCNNMulti, CovidPredictionModelCNNUni
+from sns_covid.model.model_trainer import *
 from sns_covid.visulisation.plotter import visualise
 
 
 def build_model(train):
     # model = CovidPredictionModelCNNMulti('cnn_multi', cnn_multi, train)
-    model = CovidPredictionModelCNNUni('cnn_uni', cnn_uni, train)
+    # model = CovidPredictionModelCNNUni('cnn_uni', cnn_uni, train)
+    # model = CovidPredictionModelNaiveDaily('daily_naive', train)
+    model = CovidPredictionModelNaiveWeekly('weekly_naive', train)
     model.compile()
     model.fit()
     return model
