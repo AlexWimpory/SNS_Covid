@@ -51,6 +51,15 @@ def show_heatmap(data):
     plt.show()
 
 
+def plot_loss(history):
+    plt.title('Model Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.plot(history.history['loss'], marker='o', markersize=3)
+    plt.grid()
+    plt.show()
+
+
 if __name__ == '__main__':
     df = load_country(config.country_iso_code, download=False)
     df = smooth_data(df, 'new_deaths')

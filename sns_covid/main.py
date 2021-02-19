@@ -1,3 +1,4 @@
+from sns_covid import config
 from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import generate_train_test
 from sns_covid.model.model_structures import *

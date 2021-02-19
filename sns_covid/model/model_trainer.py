@@ -1,3 +1,5 @@
+from functools import partial
+
 from tensorflow.python.keras import Sequential
 import tensorflow as tf
 from tensorflow.python.keras.callbacks import ModelCheckpoint
@@ -5,15 +7,19 @@ from sns_covid import config
 from numpy import array
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+from sns_covid.visulisation.plotter import plot_loss
 import abc
 
 
 class CovidPredictionModel:
-    def __init__(self, model_name, layers):
+    def __init__(self, model_name, f_layers, train):
         self.model = Sequential(name=model_name)
         self.name = model_name
+        self.train_x, self.train_y = self.to_supervised(train)
+        n_timesteps, n_features, n_outputs = self.train_x.shape[1], self.train_x.shape[2], self.train_y.shape[1]
+        pf_layers = partial(f_layers, n_timesteps, n_features, n_outputs)
         # Builds layers based on the structure in model_structures
-        for layer in layers:
+        for layer in pf_layers():
             self.model.add(layer)
 
     def compile(self):
@@ -24,13 +30,14 @@ class CovidPredictionModel:
         except ValueError:
             print('Unable to produce summary')
 
-    def fit(self, train_x, train_y):
+    def fit(self):
         checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
                                        verbose=1)
-        history = self.model.fit(train_x, train_y,
+        history = self.model.fit(self.train_x, self.train_y,
                                  epochs=config.epochs,
                                  batch_size=config.batch_size,
                                  callbacks=[checkpointer])
+        plot_loss(history)
         return history
 
     @staticmethod
@@ -56,6 +63,10 @@ class CovidPredictionModel:
     def forecast(self, history):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def to_supervised(self, train):
+        raise NotImplementedError
+
     def evaluate_model(self, train, test):
         # history is a list of weekly data
         history = [x for x in train]
@@ -74,7 +85,7 @@ class CovidPredictionModel:
         return score, scores
 
 
-class CovidPredictionModelCNN(CovidPredictionModel):
+class CovidPredictionModelCNNMulti(CovidPredictionModel):
     def forecast(self, history):
         # flatten data
         data = array(history)
@@ -89,8 +100,41 @@ class CovidPredictionModelCNN(CovidPredictionModel):
         yhat = yhat[0]
         return yhat
 
-    @staticmethod
-    def to_supervised(train):
+    def to_supervised(self, train):
+        # flatten data
+        data = train.reshape((train.shape[0] * train.shape[1], train.shape[2]))
+        X, y = list(), list()
+        in_start = 0
+        # step over the entire history one time step at a time
+        for _ in range(len(data)):
+            # define the end of the input sequence
+            in_end = in_start + config.n_input
+            out_end = in_end + config.n_out
+            # ensure we have enough data for this instance
+            if out_end < len(data):
+                X.append(data[in_start:in_end, :])
+                y.append(data[in_end:out_end, 0])
+            # move along one time step
+            in_start += 1
+        return array(X), array(y)
+
+
+class CovidPredictionModelCNNUni(CovidPredictionModel):
+    def forecast(self, history):
+        # flatten data
+        data = array(history)
+        data = data.reshape((data.shape[0] * data.shape[1], data.shape[2]))
+        # retrieve last observations for input data
+        input_x = data[-config.n_input:, :]
+        # reshape into [1, n_input, n]
+        input_x = input_x.reshape((1, input_x.shape[0], input_x.shape[1]))
+        # forecast the next week
+        yhat = self.model.predict(input_x, verbose=0)
+        # we only want the vector forecast
+        yhat = yhat[0]
+        return yhat
+
+    def to_supervised(self, train):
         # flatten data
         data = train.reshape((train.shape[0] * train.shape[1], train.shape[2]))
         X, y = list(), list()
