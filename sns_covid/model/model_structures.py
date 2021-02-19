@@ -1,19 +1,26 @@
-from tensorflow.python.keras.layers import Dense, Dropout, Activation
+from tensorflow.python.keras.layers import *
 
 """Module which contains different neural network structures"""
 
 
-def model_1(num_labels):
-    """Basic MLP structure"""
+def cnn_multi(n_timesteps, n_features, n_outputs):
     return [
-        Dense(256, input_shape=(40,)),
-        Activation('relu'),
-        Dropout(0.2),
+        Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(n_timesteps, n_features)),
+        Conv1D(filters=32, kernel_size=3, activation='relu'),
+        MaxPooling1D(pool_size=2),
+        Conv1D(filters=16, kernel_size=3, activation='relu'),
+        MaxPooling1D(pool_size=2),
+        Flatten(),
+        Dense(100, activation='relu'),
+        Dense(n_outputs)]
 
-        Dense(256),
-        Activation('relu'),
-        Dropout(0.2),
 
-        Dense(num_labels),
-        Activation('softmax')
+def cnn_uni(n_timesteps, n_features, n_outputs):
+    return [
+        Conv1D(filters=16, kernel_size=3, activation='relu',
+               input_shape=(n_timesteps, n_features)),
+        MaxPooling1D(pool_size=2),
+        Flatten(),
+        Dense(10, activation='relu'),
+        Dense(n_outputs)
     ]
