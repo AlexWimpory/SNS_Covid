@@ -2,19 +2,14 @@ from sns_covid import config
 from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import generate_train_test
 from sns_covid.model.model_structures import *
-from sns_covid.model.model_trainer import CovidPredictionModelCNNMulti
+from sns_covid.model.model_trainer import CovidPredictionModelCNNMulti, CovidPredictionModelCNNUni
 from sns_covid.visulisation.plotter import visualise
 
 
-# Different - large
 def build_model(train):
-    # prepare data
-    # define parameters
-    # define model
-    model = CovidPredictionModelCNNMulti('cnn_multi', cnn_multi, train)
-    # compile model
+    # model = CovidPredictionModelCNNMulti('cnn_multi', cnn_multi, train)
+    model = CovidPredictionModelCNNUni('cnn_uni', cnn_uni, train)
     model.compile()
-    # fit network
     model.fit()
     return model
 

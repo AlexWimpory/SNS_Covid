@@ -125,9 +125,9 @@ class CovidPredictionModelCNNUni(CovidPredictionModel):
         data = array(history)
         data = data.reshape((data.shape[0] * data.shape[1], data.shape[2]))
         # retrieve last observations for input data
-        input_x = data[-config.n_input:, :]
-        # reshape into [1, n_input, n]
-        input_x = input_x.reshape((1, input_x.shape[0], input_x.shape[1]))
+        input_x = data[-config.n_input:, 0]
+        # reshape into [1, n_input, 1]
+        input_x = input_x.reshape((1, len(input_x), 1))
         # forecast the next week
         yhat = self.model.predict(input_x, verbose=0)
         # we only want the vector forecast
@@ -146,7 +146,9 @@ class CovidPredictionModelCNNUni(CovidPredictionModel):
             out_end = in_end + config.n_out
             # ensure we have enough data for this instance
             if out_end < len(data):
-                X.append(data[in_start:in_end, :])
+                x_input = data[in_start:in_end, 0]
+                x_input = x_input.reshape((len(x_input), 1))
+                X.append(x_input)
                 y.append(data[in_end:out_end, 0])
             # move along one time step
             in_start += 1

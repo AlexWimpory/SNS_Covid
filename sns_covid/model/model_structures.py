@@ -13,3 +13,14 @@ def cnn_multi(n_timesteps, n_features, n_outputs):
         Flatten(),
         Dense(100, activation='relu'),
         Dense(n_outputs)]
+
+
+def cnn_uni(n_timesteps, n_features, n_outputs):
+    return [
+        Conv1D(filters=16, kernel_size=3, activation='relu',
+               input_shape=(n_timesteps, n_features)),
+        MaxPooling1D(pool_size=2),
+        Flatten(),
+        Dense(10, activation='relu'),
+        Dense(n_outputs)
+    ]
