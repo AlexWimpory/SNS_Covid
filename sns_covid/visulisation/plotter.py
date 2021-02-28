@@ -8,7 +8,7 @@ import seaborn as sns
 
 def visualise(model_name, score, scores):
     # summarize scores
-    s_scores = ', '.join(['%.1f' % s for s in scores])
+    s_scores = ', '.join(['%.3f' % s for s in scores])
     print('%s: [%.3f] %s' % (model_name, score, s_scores))
     # plot scores
     days = ['1', '2', '3', '4', '5', '6', '7']
@@ -55,9 +55,15 @@ def plot_loss(history):
     plt.title('Model Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.plot(history.history['loss'], marker='o', markersize=3)
+    plt.plot(history.history['val_loss'], marker='o', markersize=3,  label='val')
+    plt.plot(history.history['loss'], marker='o', markersize=3, label='train')
+    plt.legend()
     plt.grid()
     plt.show()
+
+
+def plot_prediction_vs_actual(prediction, actual):
+    pass
 
 
 if __name__ == '__main__':
@@ -65,4 +71,4 @@ if __name__ == '__main__':
     df = smooth_data(df, 'new_deaths')
     plot_time_indexed_data(df, ['new_deaths_smoothed', 'new_deaths', 'new_deaths_smoothed_manual'])
     plot_correlation(df, 'new_deaths_smoothed')
-    show_heatmap(df[df.columns[df.columns.isin(config.columns_used)]])
+    show_heatmap(df[df.columns[df.columns.isin(config.input_columns)]])
