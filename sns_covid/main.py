@@ -2,21 +2,19 @@ from functools import partial
 from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import generate_train_test
 from sns_covid.model.model_structures import *
-from sns_covid.model.cnn_model import *
+from sns_covid.model.uni_multi_model import *
 from sns_covid.model.naive_model import CovidPredictionModelNaiveDaily, CovidPredictionModelNaiveWeekly
 from sns_covid.visulisation.plotter import visualise
 from consolemenu import ConsoleMenu
 
-# TODO Set frequency on dataframe to fill in any gaps (prob aren't any but good practice)(uses date column)
 # TODO Reverse normalisation
-# TODO Download data if currently empty
-# TODO Set output column
-# TODO Train and test multiple models and save the best
-# TODO Plot predictions and actual
 # TODO Fill new vaccinations in with 0s
-# TODO Move test,val,train ratio into config
+# TODO Set output column
+# TODO Set frequency on dataframe to fill in any gaps (prob aren't any but good practice)(uses date column)
+# TODO Train and test multiple models and save the best
 # TODO Logging
 # TODO Comments and docstrings
+# TODO Combine sources of data
 
 
 def run_model(f_model):
@@ -44,12 +42,27 @@ def run_naive_weekly_model():
 
 
 def run_cnn_uni_model():
-    f_model = partial(CovidPredictionModelCNNUni, 'cnn_uni', cnn_uni)
+    f_model = partial(CovidPredictionModelUni, 'cnn_uni', cnn_uni)
     run_model(f_model)
 
 
 def run_cnn_multi_model():
-    f_model = partial(CovidPredictionModelCNNMulti, 'cnn_multi', cnn_multi)
+    f_model = partial(CovidPredictionModelMulti, 'cnn_multi', cnn_multi)
+    run_model(f_model)
+
+
+def run_lstm_simple_uni_model():
+    f_model = partial(CovidPredictionModelUni, 'lstm_simple_uni', lstm_simple_uni)
+    run_model(f_model)
+
+
+def run_lstm_enc_dec_uni_model():
+    f_model = partial(CovidPredictionModelUni, 'lstm_enc_dec_uni', lstm_enc_dec)
+    run_model(f_model)
+
+
+def run_lstm_enc_dec_multi_model():
+    f_model = partial(CovidPredictionModelMulti, 'lstm_enc_dec_multi', lstm_enc_dec)
     run_model(f_model)
 
 
@@ -62,7 +75,10 @@ if __name__ == '__main__':
         'daily_naive': run_naive_daily_model,
         'weekly_naive': run_naive_weekly_model,
         'uni_cnn': run_cnn_uni_model,
-        'multi_cnn': run_cnn_multi_model
+        'multi_cnn': run_cnn_multi_model,
+        'lstm_simple_uni': run_lstm_simple_uni_model,
+        'lstm_enc_dec_uni': run_lstm_enc_dec_uni_model,
+        'lstm_enc_dec_multi': run_lstm_enc_dec_multi_model
     })
     menu = ConsoleMenu('Covid-19', {
         'Download data file': load_data,

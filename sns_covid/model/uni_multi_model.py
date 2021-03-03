@@ -1,10 +1,9 @@
 from sns_covid import config
 from numpy import array
-from sns_covid.model.base_model import CovidPredictionModel
 from sns_covid.model.sequential_model import CovidPredictionSequentialModel
 
 
-class CovidPredictionModelCNNMulti(CovidPredictionSequentialModel):
+class CovidPredictionModelMulti(CovidPredictionSequentialModel):
     def forecast(self, history):
         # flatten data
         data = array(history)
@@ -38,7 +37,7 @@ class CovidPredictionModelCNNMulti(CovidPredictionSequentialModel):
         return array(X), array(y)
 
 
-class CovidPredictionModelCNNUni(CovidPredictionSequentialModel):
+class CovidPredictionModelUni(CovidPredictionSequentialModel):
     def forecast(self, history):
         # flatten data
         data = array(history)

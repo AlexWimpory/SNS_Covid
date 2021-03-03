@@ -24,7 +24,7 @@ def load_data(download=False):
     """
     basename = os.path.splitext(os.path.basename(config.data_source_url))[0]
     file_name = f'{config.output_directory}/{basename}.json'
-    if download:
+    if download or not os.path.isfile(file_name):
         # Check if the url contains a downloadable file
         check_downloadable(config.data_source_url)
         file = requests.get(config.data_source_url, allow_redirects=True)

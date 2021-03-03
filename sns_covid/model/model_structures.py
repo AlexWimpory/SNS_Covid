@@ -24,3 +24,21 @@ def cnn_uni(n_timesteps, n_features, n_outputs):
         Dense(10, activation='relu'),
         Dense(n_outputs)
     ]
+
+
+def lstm_simple_uni(n_timesteps, n_features, n_outputs):
+    return [
+        LSTM(32, activation='relu', input_shape=(n_timesteps, n_features)),
+        Dense(10, activation='relu'),
+        Dense(n_outputs)
+    ]
+
+
+def lstm_enc_dec(n_timesteps, n_features, n_outputs):
+    return [
+        LSTM(200, activation='relu', input_shape=(n_timesteps, n_features)),
+        RepeatVector(n_outputs),
+        LSTM(200, activation='relu', return_sequences=True),
+        TimeDistributed(Dense(100, activation='relu')),
+        TimeDistributed(Dense(1))
+    ]

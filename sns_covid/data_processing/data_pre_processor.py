@@ -22,6 +22,8 @@ def insert_missing_dates():
 
 
 def remove_nan(df):
+    for column in config.backfill_overide:
+        df[column].ffill(axis='rows').fillna(0)
     df = df.bfill(axis='rows', limit=7).ffill(axis='rows', limit=7)
     return df.dropna(axis=0)
 

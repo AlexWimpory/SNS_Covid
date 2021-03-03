@@ -4,7 +4,7 @@ from sns_covid import config
 from sns_covid.data_processing.data_loader import load_country
 from sns_covid.data_processing.data_pre_processor import smooth_data
 import seaborn as sns
-
+import numpy as np
 
 def visualise(model_name, score, scores):
     # summarize scores
@@ -63,7 +63,16 @@ def plot_loss(history):
 
 
 def plot_prediction_vs_actual(prediction, actual):
-    pass
+    shape = prediction.shape
+    prediction.reshape(shape[0], shape[1])
+    plt.plot(actual.flatten(), marker='o')
+    x = np.array(range(0, shape[1]))
+    for i in range(0, shape[0]):
+        plt.plot(x, prediction[i], marker='o', color='orange')
+        x = x + shape[1]
+    plt.legend(['actual', 'predictions'])
+    plt.grid()
+    plt.show()
 
 
 if __name__ == '__main__':
