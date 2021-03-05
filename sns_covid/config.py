@@ -4,8 +4,8 @@ date_column_name = 'date'
 date_column_format = '%Y-%m-%d'
 country_iso_code = 'GBR'
 input_columns = ['new_deaths_smoothed', 'new_cases_smoothed', 'stringency_index',
-                 'reproduction_rate', 'people_vaccinated']
-backfill_overide = ['people_vaccinated']
+                 'reproduction_rate']
+fill_override = []
 
 epochs = 1000
 batch_size = 16

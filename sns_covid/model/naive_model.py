@@ -7,7 +7,7 @@ class CovidPredictionModelNaiveDaily(CovidPredictionModel):
         self.train = train
 
     def fit(self):
-        pass
+        return None
 
     def compile(self):
         pass

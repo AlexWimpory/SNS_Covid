@@ -24,6 +24,7 @@ def load_data(download=False):
     """
     basename = os.path.splitext(os.path.basename(config.data_source_url))[0]
     file_name = f'{config.output_directory}/{basename}.json'
+    # Downloads the data if user wants to or if the data directory is empty
     if download or not os.path.isfile(file_name):
         # Check if the url contains a downloadable file
         check_downloadable(config.data_source_url)

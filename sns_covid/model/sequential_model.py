@@ -2,9 +2,12 @@ from functools import partial
 from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
 from sns_covid import config
+from sns_covid.logging_config import get_logger
 from sns_covid.model.base_model import CovidPredictionModel
-from sns_covid.visulisation.plotter import plot_loss
 import abc
+
+logger = get_logger(__name__)
+file_logger = get_logger('file_logger')
 
 
 class CovidPredictionSequentialModel(CovidPredictionModel):
@@ -22,23 +25,25 @@ class CovidPredictionSequentialModel(CovidPredictionModel):
         self.model.compile(loss='mse',
                            optimizer='adam')
         try:
-            self.model.summary()
+            # Printing model structure to a logging file
+            self.model.summary(print_fn=file_logger.info)
         except ValueError:
-            print('Unable to produce summary')
+            logger.info('Unable to produce summary')
 
     def fit(self):
         checkpointer = ModelCheckpoint(filepath=f'data/{self.model.name}.hdf5',
                                        monitor='val_loss',
                                        save_best_only=True,
-                                       verbose=1)
-        es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
+                                       verbose=0)
+        es = EarlyStopping(monitor='val_loss', mode='min', verbose=0, patience=50)
         history = self.model.fit(self.train_x, self.train_y,
                                  epochs=config.epochs,
                                  batch_size=config.batch_size,
                                  callbacks=[checkpointer, es],
                                  shuffle=False,
-                                 validation_split=0.2)
-        plot_loss(history)
+                                 validation_split=0.2,
+                                 verbose=0)
+        return history
 
     @abc.abstractmethod
     def to_supervised(self, train):

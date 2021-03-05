@@ -6,14 +6,18 @@ from sns_covid.data_processing.data_pre_processor import smooth_data
 import seaborn as sns
 import numpy as np
 
-def visualise(model_name, score, scores):
-    # summarize scores
-    s_scores = ', '.join(['%.3f' % s for s in scores])
-    print('%s: [%.3f] %s' % (model_name, score, s_scores))
+
+def visualise(scores):
     # plot scores
     days = ['1', '2', '3', '4', '5', '6', '7']
     plt.plot(days, scores, marker='o', label='cnn')
     plt.show()
+
+
+def print_scores(logger, model_name, score, scores):
+    # summarize scores
+    s_scores = ', '.join(['%.3f' % s for s in scores])
+    logger.info('%s: [%.3f] %s' % (model_name, score, s_scores))
 
 
 def plot_time_indexed_data(dataframe, categories):
@@ -52,10 +56,12 @@ def show_heatmap(data):
 
 
 def plot_loss(history):
+    if history is None:
+        return
     plt.title('Model Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.plot(history.history['val_loss'], marker='o', markersize=3,  label='val')
+    plt.plot(history.history['val_loss'], marker='o', markersize=3, label='val')
     plt.plot(history.history['loss'], marker='o', markersize=3, label='train')
     plt.legend()
     plt.grid()

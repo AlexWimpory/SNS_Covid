@@ -45,7 +45,14 @@ class CovidPredictionModel:
         predictions = array(predictions)
         # Actual is an x by 7 of the real results for each week in the test set
         actual = test[:, :, 0]
-        plot_prediction_vs_actual(predictions, actual)
         # Compare the predictions to the actual data through the RMSE
         score, scores = self.evaluate_forecasts(actual, predictions)
-        return score, scores
+        return score, scores, predictions, actual
+
+    @abc.abstractmethod
+    def fit(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def compile(self):
+        raise NotImplementedError
