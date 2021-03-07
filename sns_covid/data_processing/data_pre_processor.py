@@ -106,6 +106,9 @@ class Dataset:
         """
         df = df[df.columns[df.columns.isin(config.input_columns)]]
         # Order the columns as they appear in config
-        df = df.reindex(columns=config.input_columns)
+        process_columns = config.input_columns.copy()
+        process_columns.remove(config.output_column)
+        process_columns.insert(0, config.output_column)
+        df = df.reindex(columns=process_columns)
         logger.info(f'Columns to be trained on: {config.input_columns}')
         return df

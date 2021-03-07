@@ -9,8 +9,8 @@ file_logger = get_logger('file_logger')
 
 
 # Reverse normalisation
-# TODO Set output column
-# TODO Set frequency on dataframe to fill in any gaps (prob aren't any but good practice)(uses date column)
+# Set output column
+# Set frequency on dataframe to fill in any gaps (prob aren't any but good practice)(uses date column)
 # TODO Logging
 # TODO Comments and docstrings
 # TODO Combine sources of data

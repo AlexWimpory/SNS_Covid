@@ -61,5 +61,7 @@ def load_country(iso_code, download=False):
         dataframe['date'] = pd.to_datetime(dataframe['date'])
         # Set the date time as the index for the dataframe
         dataframe.set_index('date', inplace=True)
+        # Set frequency of dataframe to daily to fill in missing dates with nan
+        dataframe.asfreq('d')
         logger.info(f'Data loaded for {iso_code}')
         return dataframe
