@@ -1,23 +1,31 @@
 from sklearn.metrics import mean_squared_error
 from math import sqrt
-from sns_covid.visulisation.plotter import plot_prediction_vs_actual
 from numpy import array
 import abc
 
 
 class CovidPredictionModel:
+    """
+    Base class
+    """
     @staticmethod
     def evaluate_forecasts(actual, predicted):
+        """
+        Calculate the RMSE (root mean squared error) for each day and across all days
+        :param actual: Real life data to be compared to predictions
+        :param predicted: Model output predictions
+        :return: score = RMSE of each day
+                 scores = RMSE across all of the days
+        """
         scores = list()
-        # calculate an RMSE score for each day
+        # Calculate the RMSE for each day which has been predicted
         for i in range(actual.shape[1]):
-            # calculate mse
+            # Calculate the MSE
             mse = mean_squared_error(actual[:, i], predicted[:, i])
-            # calculate rmse
+            # Calculate RMSE from the MSE
             rmse = sqrt(mse)
-            # store
             scores.append(rmse)
-            # calculate overall RMSE
+            # Calculate RMSE across all of the predicted days
         s = 0
         for row in range(actual.shape[0]):
             for col in range(actual.shape[1]):
@@ -27,6 +35,14 @@ class CovidPredictionModel:
 
     @abc.abstractmethod
     def forecast(self, history):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def fit(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def compile(self):
         raise NotImplementedError
 
     def evaluate_model(self, train, test):
@@ -48,11 +64,3 @@ class CovidPredictionModel:
         # Compare the predictions to the actual data through the RMSE
         score, scores = self.evaluate_forecasts(actual, predictions)
         return score, scores, predictions, actual
-
-    @abc.abstractmethod
-    def fit(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def compile(self):
-        raise NotImplementedError

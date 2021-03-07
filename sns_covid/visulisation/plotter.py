@@ -14,10 +14,11 @@ def visualise(scores):
     plt.show()
 
 
-def print_scores(logger, model_name, score, scores):
+def print_scores(logger, file_logger, model_name, score, scores, prefix):
     # summarize scores
     s_scores = ', '.join(['%.3f' % s for s in scores])
-    logger.info('%s: [%.3f] %s' % (model_name, score, s_scores))
+    logger.info('%s %s: [%.3f] %s' % (prefix, model_name, score, s_scores))
+    file_logger.info('%s %s: [%.3f] %s' % (prefix, model_name, score, s_scores))
 
 
 def plot_time_indexed_data(dataframe, categories):

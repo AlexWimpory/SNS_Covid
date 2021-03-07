@@ -28,7 +28,7 @@ def cnn_uni(n_timesteps, n_features, n_outputs):
 
 def lstm_simple_uni(n_timesteps, n_features, n_outputs):
     return [
-        LSTM(32, activation='relu', input_shape=(n_timesteps, n_features)),
+        LSTM(100, activation='relu', input_shape=(n_timesteps, n_features)),
         Dense(10, activation='relu'),
         Dense(n_outputs)
     ]

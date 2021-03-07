@@ -3,7 +3,9 @@ import os
 from urllib.error import URLError
 import requests
 import pandas as pd
-from sns_covid import config
+from sns_covid import config, logging_config
+
+logger = logging_config.get_logger(__name__)
 
 
 def check_downloadable(url):
@@ -32,6 +34,9 @@ def load_data(download=False):
         # Write to a new file
         with open(file_name, 'wb') as fin:
             fin.write(file.content)
+        logger.info(f'Data downloaded from {config.data_source_url}')
+    else:
+        logger.info('Data not downloaded')
     return file_name
 
 
@@ -56,4 +61,5 @@ def load_country(iso_code, download=False):
         dataframe['date'] = pd.to_datetime(dataframe['date'])
         # Set the date time as the index for the dataframe
         dataframe.set_index('date', inplace=True)
+        logger.info(f'Data loaded for {iso_code}')
         return dataframe

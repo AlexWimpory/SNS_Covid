@@ -23,6 +23,7 @@ def filter_data(df):
     df = df[df.columns[df.columns.isin(config.input_columns)]]
     # Order the columns as they appear in config
     df = df.reindex(columns=config.input_columns)
+    logger.info(f'Columns to be trained on: {config.input_columns}')
     return df
 
 
@@ -85,14 +86,16 @@ def normalise_data(train, test):
     """
     train_mean = train.mean()
     train_std = train.std()
-    train = (train - train_mean) / train_std
-    test = (test - train_mean) / train_std
-    return train, test
+    norm_train = (train - train_mean) / train_std
+    norm_test = (test - train_mean) / train_std
+    return norm_train, norm_test
 
 
 def generate_train_test(df):
     """
     Perform all of the required preprocessing techniques to the dataframe, returning a train and a test set
+    :param df: Dataframe for a country loaded from the OWID json file
+    :return: Preprocessed train and test set
     """
     processed_df = filter_data(df)
     processed_df = remove_nan(processed_df)
