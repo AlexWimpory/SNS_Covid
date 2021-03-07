@@ -2,9 +2,9 @@ from sns_covid.model.base_model import CovidPredictionModel
 
 
 class CovidPredictionModelNaiveDaily(CovidPredictionModel):
-    def __init__(self, model_name, train):
+    def __init__(self, model_name, dataset):
         self.name = model_name
-        self.train = train
+        self.train = dataset.train_df
 
     def fit(self):
         return None
@@ -23,9 +23,9 @@ class CovidPredictionModelNaiveDaily(CovidPredictionModel):
 
 
 class CovidPredictionModelNaiveWeekly(CovidPredictionModel):
-    def __init__(self, model_name, train):
+    def __init__(self, model_name, dataset):
         self.name = model_name
-        self.train = train
+        self.train = dataset.train_df
 
     def fit(self):
         pass

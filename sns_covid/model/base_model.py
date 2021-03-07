@@ -45,22 +45,22 @@ class CovidPredictionModel:
     def compile(self):
         raise NotImplementedError
 
-    def evaluate_model(self, train, test):
+    def evaluate_model(self, dataset):
         # history is a list of weekly data
-        history = [x for x in train]
+        history = [x for x in dataset.train_df]
         # walk-forward validation over each week
         predictions = list()
-        for i in range(len(test)):
+        for i in range(len(dataset.test_df)):
             # predict the week
             y_pred_sequence = self.forecast(history)
             # store the predictions
             predictions.append(y_pred_sequence)
             # get real observation and add to history for predicting the next week
-            history.append(test[i, :])
-        # Predictions an x by 7 array for each week in the test set
-        predictions = array(predictions)
+            history.append(dataset.test_df[i, :])
+        # Predictions is an x by 7 array for each week in the test set
+        predictions = dataset.denormalise_data(array(predictions))
         # Actual is an x by 7 of the real results for each week in the test set
-        actual = test[:, :, 0]
+        actual = dataset.denormalise_data(dataset.test_df[:, :, 0])
         # Compare the predictions to the actual data through the RMSE
         score, scores = self.evaluate_forecasts(actual, predictions)
         return score, scores, predictions, actual

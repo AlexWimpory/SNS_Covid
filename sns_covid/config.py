@@ -5,6 +5,7 @@ date_column_format = '%Y-%m-%d'
 country_iso_code = 'GBR'
 input_columns = ['new_deaths_smoothed', 'new_cases_smoothed', 'stringency_index',
                  'reproduction_rate']
+output_column = 'new_deaths_smoothed'
 fill_override = []
 
 epochs = 1000

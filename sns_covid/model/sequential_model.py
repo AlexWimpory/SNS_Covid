@@ -11,10 +11,10 @@ file_logger = get_logger('file_logger')
 
 
 class CovidPredictionSequentialModel(CovidPredictionModel):
-    def __init__(self, model_name, f_layers, train):
+    def __init__(self, model_name, f_layers, dataset):
         self.model = Sequential(name=model_name)
         self.name = model_name
-        self.train_x, self.train_y = self.to_supervised(train)
+        self.train_x, self.train_y = self.to_supervised(dataset.train_df)
         n_timesteps, n_features, n_outputs = self.train_x.shape[1], self.train_x.shape[2], self.train_y.shape[1]
         pf_layers = partial(f_layers, n_timesteps, n_features, n_outputs)
         # Builds layers based on the structure in model_structures
