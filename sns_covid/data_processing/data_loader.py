@@ -13,6 +13,7 @@ def check_downloadable(url):
     Checks if the url contains a downloadable file
     """
     # Get the header for the file (not its contents)
+    logger.info(f'Checking download')
     file_head = requests.head(url, allow_redirects=True)
     # Check if it is a json file
     content_type = file_head.headers.get('content-type')
@@ -30,11 +31,11 @@ def load_data(download=False):
     if download or not os.path.isfile(file_name):
         # Check if the url contains a downloadable file
         check_downloadable(config.data_source_url)
+        logger.info(f'Downloading data from {config.data_source_url}')
         file = requests.get(config.data_source_url, allow_redirects=True)
         # Write to a new file
         with open(file_name, 'wb') as fin:
             fin.write(file.content)
-        logger.info(f'Data downloaded from {config.data_source_url}')
     else:
         logger.info('Data not downloaded')
     return file_name

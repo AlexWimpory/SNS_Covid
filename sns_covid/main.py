@@ -8,9 +8,6 @@ logger = get_logger(__name__)
 file_logger = get_logger('file_logger')
 
 
-# Reverse normalisation
-# Set output column
-# Set frequency on dataframe to fill in any gaps (prob aren't any but good practice)(uses date column)
 # TODO Logging
 # TODO Comments and docstrings
 # TODO Combine sources of data
@@ -39,6 +36,9 @@ def run_model(f_model, model_runs=1):
 
 
 def capture_evaluate(result, score, scores, predictions, actual):
+    """
+    Remember score,scores, actual and predictions for a model
+    """
     result['score'] = score
     result['scores'] = scores
     result['predictions'] = predictions
@@ -47,6 +47,13 @@ def capture_evaluate(result, score, scores, predictions, actual):
 
 
 def plot_best_result(results):
+    """
+    Plots:
+    1. Loss during training
+    2. The daily forecast error
+    3. A comparison of the predictions to the actual value
+    For the best model
+    """
     best_result = None
     for result in results:
         if not best_result or best_result['score'] > result['score']:

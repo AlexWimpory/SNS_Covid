@@ -37,7 +37,7 @@ class Dataset:
         processed_df = self.__filter_data(self.df)
         processed_df = self.__remove_nan(processed_df)
         train_df, test_df = self.__split_data_train_test(processed_df)
-        train_df, test_df = self.__normalise_data(train_df, test_df)
+        train_df, test_df = self.__standardise_data(train_df, test_df)
         train_df_7 = self.__split_data_7_days(train_df)
         test_df_7 = self.__split_data_7_days(test_df)
         logger.info(f'The training data shape is: {train_df_7.shape}')
@@ -46,7 +46,24 @@ class Dataset:
 
     def __normalise_data(self, train, test):
         """
-        Normalise the data through using the mean and the standard deviation of the training set
+        Normalise the data through using the max and the min values of the training set
+        """
+        self.train_max = train.max()
+        self.train_min = train.min()
+        norm_train = (train - self.train_min) / (self.train_max - self.train_min)
+        norm_test = (test - self.train_min) / (self.train_max - self.train_min)
+        return norm_train, norm_test
+
+    def denormalise_data(self, ndarray):
+        """
+        Reverse the normalisation process
+        """
+        denorm_ndarray = (ndarray * (self.train_max[config.output_column] - self.train_min[config.output_column])) + self.train_min[config.output_column]
+        return denorm_ndarray
+
+    def __standardise_data(self, train, test):
+        """
+        Standardise the data through using the mean and the standard deviation of the training set
         """
         self.train_mean = train.mean()
         self.train_std = train.std()
@@ -54,7 +71,10 @@ class Dataset:
         norm_test = (test - self.train_mean) / self.train_std
         return norm_train, norm_test
 
-    def denormalise_data(self, ndarray):
+    def destandardise_data(self, ndarray):
+        """
+        Reverse the standardisation process
+        """
         denorm_ndarray = (ndarray * self.train_std[config.output_column]) + self.train_mean[config.output_column]
         return denorm_ndarray
 
@@ -105,7 +125,7 @@ class Dataset:
         Remove any columns in the dataframe which will not be trained on as defined in config by input_columns
         """
         df = df[df.columns[df.columns.isin(config.input_columns)]]
-        # Order the columns as they appear in config
+        # Ensure that the output column in config is the first column of the dataframe
         process_columns = config.input_columns.copy()
         process_columns.remove(config.output_column)
         process_columns.insert(0, config.output_column)

@@ -8,6 +8,9 @@ import numpy as np
 
 
 def visualise(scores):
+    """
+    Plot RMSE scores
+    """
     # plot scores
     days = ['1', '2', '3', '4', '5', '6', '7']
     plt.plot(days, scores, marker='o', label='cnn')
@@ -15,6 +18,9 @@ def visualise(scores):
 
 
 def print_scores(logger, file_logger, model_name, score, scores, prefix):
+    """
+    Print RMSE scores to the terminal and to file
+    """
     # summarize scores
     s_scores = ', '.join(['%.3f' % s for s in scores])
     logger.info('%s %s: [%.3f] %s' % (prefix, model_name, score, s_scores))
@@ -29,10 +35,14 @@ def plot_time_indexed_data(dataframe, categories):
     # Set title and labels for axes
     ax.set(xlabel="Date")
     plt.legend()
+    plt.savefig('graph.png')
     plt.show()
 
 
 def plot_correlation(dataframe, column):
+    """
+    Plot the auto-correlation for a column of data
+    """
     dataframe = dataframe[column].dropna(axis=0)
     plot_acf(dataframe, lags=50)
     plot_pacf(dataframe, lags=50)
@@ -40,6 +50,9 @@ def plot_correlation(dataframe, column):
 
 
 def show_heatmap(data):
+    """
+    Plot a correlation heatmap
+    """
     corr = data.corr()
     ax = sns.heatmap(
         corr,
@@ -57,6 +70,9 @@ def show_heatmap(data):
 
 
 def plot_loss(history):
+    """
+    Plot the training and the validation loss
+    """
     if history is None:
         return
     plt.title('Model Loss')
@@ -70,6 +86,9 @@ def plot_loss(history):
 
 
 def plot_prediction_vs_actual(prediction, actual):
+    """
+    PLot model predictions vs the expected values
+    """
     shape = prediction.shape
     prediction.reshape(shape[0], shape[1])
     plt.plot(actual.flatten(), marker='o')
@@ -83,6 +102,9 @@ def plot_prediction_vs_actual(prediction, actual):
 
 
 if __name__ == '__main__':
+    # Overriding config as this module is at a different level and can't find the data
+    # Could implement something more complicated but not worth the time
+    config.output_directory = '../data'
     df = load_country(config.country_iso_code, download=False)
     df = smooth_data(df, 'new_deaths')
     plot_time_indexed_data(df, ['new_deaths_smoothed', 'new_deaths', 'new_deaths_smoothed_manual'])
