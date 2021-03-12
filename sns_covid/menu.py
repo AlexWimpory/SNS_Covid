@@ -1,4 +1,6 @@
 from consolemenu import ConsoleMenu
+
+from sns_covid import config
 from sns_covid.main import run_model
 from sns_covid.model.naive_model import CovidPredictionModelNaiveDaily, CovidPredictionModelNaiveWeekly
 from functools import partial
@@ -52,8 +54,12 @@ def run_lstm_enc_dec_multi_model():
     run_model(f_model, model_runs)
 
 
-def download_data():
-    load_data(download=True)
+def download_data_owid():
+    load_data(config.owid_url, download=True)
+
+
+def download_data_gstatic():
+    load_data(config.gstatic_url, download=True)
 
 
 def run_menu():
@@ -70,7 +76,8 @@ def run_menu():
     })
     # Define main menu
     menu = ConsoleMenu('Covid-19', {
-        'Download data file': download_data,
+        'Download OWID data file': download_data_owid,
+        'Download GStatic data file': download_data_gstatic,
         'Choose model': model_menu
     })
     menu.execute()

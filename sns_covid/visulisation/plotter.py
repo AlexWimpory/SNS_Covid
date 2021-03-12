@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from sns_covid import config
-from sns_covid.data_processing.data_loader import load_country
+from sns_covid.data_processing.data_loader import load_country_owid
 from sns_covid.data_processing.data_pre_processor import smooth_data
 import seaborn as sns
 import numpy as np
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     # Overriding config as this module is at a different level and can't find the data
     # Could implement something more complicated but not worth the time
     config.output_directory = '../data'
-    df = load_country(config.country_iso_code, download=False)
+    df = load_country_owid(config.country_iso_code, download=False)
     df = smooth_data(df, 'new_deaths')
     plot_time_indexed_data(df, ['new_deaths_smoothed', 'new_deaths', 'new_deaths_smoothed_manual'])
     plot_correlation(df, 'new_deaths_smoothed')

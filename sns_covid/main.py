@@ -1,4 +1,4 @@
-from sns_covid.data_processing.data_loader import load_country
+from sns_covid.data_processing.data_loader import load_country_owid, load_country_gstatic
 from sns_covid.data_processing.data_pre_processor import Dataset
 from sns_covid.logging_config import get_logger
 from sns_covid.model.uni_multi_model import *
@@ -8,16 +8,16 @@ logger = get_logger(__name__)
 file_logger = get_logger('file_logger')
 
 
-# TODO Logging
-# TODO Comments and docstrings
 # TODO Combine sources of data
-
+# TODO readme
 
 def run_model(f_model, model_runs=1):
     # Load the data into a dataframe
-    df = load_country(config.country_iso_code)
+    df_owid = load_country_owid(config.country_iso_code)
+    df_gstatic = load_country_gstatic(config.country_alpha_2_code)
+    df_all = df_owid.join(df_gstatic)
     # Generate the train and test dataframes
-    dataset = Dataset(df)
+    dataset = Dataset(df_all)
     results = []
     for i in range(0, model_runs):
         result = dict()
