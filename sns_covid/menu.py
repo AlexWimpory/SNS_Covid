@@ -1,5 +1,4 @@
 from consolemenu import ConsoleMenu
-
 from sns_covid import config
 from sns_covid.main import run_model
 from sns_covid.model.naive_model import CovidPredictionModelNaiveDaily, CovidPredictionModelNaiveWeekly

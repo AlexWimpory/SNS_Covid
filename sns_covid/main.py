@@ -8,9 +8,6 @@ logger = get_logger(__name__)
 file_logger = get_logger('file_logger')
 
 
-# TODO Combine sources of data
-# TODO readme
-
 def run_model(f_model, model_runs=1):
     # Load the data into a dataframe
     df_owid = load_country_owid(config.country_iso_code)
