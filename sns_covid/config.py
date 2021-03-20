@@ -8,7 +8,10 @@ date_column_format = '%Y-%m-%d'
 country_iso_code = 'GBR'
 country_alpha_2_code = 'GB'
 input_columns = ['new_deaths_smoothed', 'new_cases_smoothed', 'stringency_index',
-                 'reproduction_rate', 'retail_and_recreation_percent_change_from_baseline']
+                 'reproduction_rate', 'grocery_and_pharmacy_percent_change_from_baseline',
+                 'parks_percent_change_from_baseline', 'transit_stations_percent_change_from_baseline',
+                 'workplaces_percent_change_from_baseline',
+                 ]
 output_column = 'new_deaths_smoothed'
 fill_override = []
 

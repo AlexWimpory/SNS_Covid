@@ -77,7 +77,7 @@ def run_menu():
     # Define main menu
     menu = ConsoleMenu('Covid-19', {
         'Download OWID data file': download_data_owid,
-        'Download GStatic data file': download_data_gstatic,
+        'Download Google mobility data file': download_data_gstatic,
         'Choose model': model_menu
     })
     menu.execute()
